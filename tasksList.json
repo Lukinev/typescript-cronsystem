@@ -1,0 +1,14 @@
+{
+    "tasksList": [
+        {
+            "taskName": "query to Firebird",
+            "taskSchedule": "*/10 * * * * *",
+            "taskModuleName": "queryFDB"
+        },
+        {
+            "taskName": "second task",
+            "taskSchedule": "*/25 * * * * *",
+            "taskModuleName": "test2"
+        }
+    ]
+}
