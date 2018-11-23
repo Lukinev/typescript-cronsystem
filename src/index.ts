@@ -2,15 +2,16 @@ import cron from 'cron';
 import * as fs from 'fs';
 import moment from 'moment';
 import path from 'path';
+import { tasksList } from './tasksList';
 
 let jobs = [];
-let tasksArray = JSON.parse(fs.readFileSync('tasksList.json', { encoding: 'utf8' })).tasksList;
-for (let index = 0; index < tasksArray.length; index++) {
+//let tasksList = JSON.parse(fs.readFileSync('tasksList.json', { encoding: 'utf8' })).tasksList;
+
+for (let index = 0; index < tasksList.length; index++) {
     jobs.push(new cron.CronJob({
-        cronTime: tasksArray[index].taskSchedule,
+        cronTime: tasksList[index].taskSchedule,
         onTick: function () {
-            require('./tasks/' + tasksArray[index].taskModuleName + '/index.js').run(moment().format('HH:mm:ss') + ' >> ');
-            //console.log('job ticked ' + tasksArray[index].taskModuleName + ' >> ' + moment().format('hh:mm:ss'));
+            require('./tasks/' + tasksList[index].taskModuleName + '/index.js').run(moment().format('HH:mm:ss') + ' >> ');
         },
         onComplete: function () {
             console.log('All done');
@@ -23,11 +24,12 @@ for (let index = 0; index < tasksArray.length; index++) {
 for (let index = 0; index < jobs.length; index++) {
     jobs[index].start();
 }
-export function save2log(filePath: string, writeString: string) {
+
+export function save2Log(filePath: string, writeString: string) {
     const newLineChar = process.platform === 'win32' ? '\r\n' : '\n';
-    fs.appendFileSync(path.dirname(filePath) + '.log', newLineChar + writeString);
-    console.log('');
-    console.log(writeString);
+    let dateTime = moment().format('DD.MM.YYYY HH:mm:ss');
+    fs.appendFileSync(path.dirname(filePath) + '.log', newLineChar + dateTime + ' >> ' + writeString);
+    console.log(dateTime + ' >> ' + writeString);
 }
 console.log('Cron system started at ' + moment().format('DD.MM.YYYY HH:mm:ss'));
 
